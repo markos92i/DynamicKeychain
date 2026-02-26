@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "DD888485-5992-4469-9B7F-8C68BCFFAC2B",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "DynamicKeychainTests",
+        "name" : "DynamicKeychainTests"
+      }
+    }
+  ],
+  "version" : 1
+}
