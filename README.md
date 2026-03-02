@@ -25,3 +25,21 @@ struct YourView: View {
     }
 }
 ```
+
+You can create a wrapper to access programatically to those variables if you want
+Swift
+```
+struct Defaults {
+    static let shared = Defaults()
+    @AppStorage("app.device.theme") var appTheme: Theme = .system
+    @Keychain("user.session.email") var email: String = ""
+}
+```
+
+Or directly access via KeychainStore
+Swift
+```
+KeychainStore.shared.save("access_token", ...)
+let token = KeychainStore.shared.load(["access_token"])
+KeychainStore.shared.delete(["access_token"])
+```
