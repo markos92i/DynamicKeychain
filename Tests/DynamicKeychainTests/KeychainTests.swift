@@ -5,6 +5,28 @@ import Testing
 
 @Suite
 struct KeychainTests {
+    @Test func withAccessGroupInt() async throws {
+        let store = KeychainStore(accesibility: .whenUnlocked, accessGroup: "ABCDE12345.test.keychain.app")
+        @Keychain("test.value.optional.bool", store: store) var value: Bool?
+        
+        value = true
+        #expect(value == true)
+        
+        value = nil
+        #expect(value == nil)
+    }
+    
+    @Test func withAccessGroupString() async throws {
+        let store = KeychainStore(accesibility: .whenUnlocked, accessGroup: "ABCDE12345.test.keychain.app")
+        @Keychain("test.value.optional.string", store: store) var value: String?
+        
+        value = "Hello, World!"
+        #expect(value == "Hello, World!")
+        
+        value = nil
+        #expect(value == nil)
+    }
+
     @Test func optionalBool() async throws {
         @Keychain("test.value.optional.bool") var value: Bool?
         
