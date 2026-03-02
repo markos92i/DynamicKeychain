@@ -12,10 +12,19 @@ Swift
 import DynamicKeychain
 
 struct YourView: View {
+    let myStore = KeychainStore(accesibility: .whenUnlocked, accessGroup: "ABCDE12345.test.keychain.app")
+    @Keychain("sharedValueAmongApps", store: myStore) var value: Bool?
+
     @Keychain("password") var password: String = ""
 
     var body: some View {        
         ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("value shared between apps of the same group")
+
+                Text(value)
+            }
+
             VStack(alignment: .leading, spacing: 10) {
                 Text("password in keychain")
 
@@ -27,6 +36,7 @@ struct YourView: View {
 ```
 
 You can create a wrapper to access programatically to those variables if you want
+
 Swift
 ```
 struct Defaults {
@@ -37,6 +47,7 @@ struct Defaults {
 ```
 
 Or directly access via KeychainStore
+
 Swift
 ```
 KeychainStore.shared.save("access_token", ...)
