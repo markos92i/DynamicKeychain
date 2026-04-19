@@ -1,9 +1,8 @@
 //
 //  KeychainStore.swift
-//  Randstad Empleo
+//  DynamicKeychain
 //
-//  Created by Marcos del Castillo Camacho on 23/1/25.
-//  Copyright © 2025 SNGULAR. All rights reserved.
+//  Created by Marcos del Castillo Camacho on 23/03/2026.
 //
 
 import Foundation

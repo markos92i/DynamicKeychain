@@ -1,9 +1,8 @@
 //
 //  Keychain.swift
-//  Randstad Empleo
+//  DynamicKeychain
 //
-//  Created by Marcos del Castillo Camacho on 9/12/24.
-//  Copyright © 2024 SNGULAR. All rights reserved.
+//  Created by Marcos del Castillo Camacho on 23/03/2026.
 //
 
 import SwiftUI
