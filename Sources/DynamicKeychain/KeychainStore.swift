@@ -51,7 +51,7 @@ public struct KeychainStore: Sendable {
                 print("OSStatus error:[\(status.rawValue)] \(status.description)")
                 return nil
             default:
-                if status != .userCanceled {
+                if status != .userCancelled {
                     print("OSStatus error:[\(status.rawValue)] \(status.description)")
                 }
 
