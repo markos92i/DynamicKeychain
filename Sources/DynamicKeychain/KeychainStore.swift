@@ -51,7 +51,7 @@ public struct KeychainStore: Sendable {
                 print("OSStatus error:[\(status.rawValue)] \(status.description)")
                 return nil
             default:
-                if status != .userCancelled {
+                if status != .userCanceled {
                     print("OSStatus error:[\(status.rawValue)] \(status.description)")
                 }
 
@@ -62,8 +62,8 @@ public struct KeychainStore: Sendable {
         }
     }
 
-    public func save(_ key: String, _ data: Data) {
-        print("save: \(key)")
+    @discardableResult
+    public func save(_ key: String, _ data: Data) -> Bool {
         let baseQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: bundleIdentifier as Any,
@@ -88,8 +88,11 @@ public struct KeychainStore: Sendable {
                 kSecValueData as String: data,
             ]
             
-            SecItemUpdate(updateQueryRes as CFDictionary, attributes as CFDictionary)
+            let updateStatus = KeychainStatus(status: SecItemUpdate(updateQueryRes as CFDictionary, attributes as CFDictionary))
+            return updateStatus == .success
         }
+        
+        return status == .success
     }
     
     public func delete(_ key: String) {

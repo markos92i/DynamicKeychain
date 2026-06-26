@@ -16,7 +16,7 @@ public enum KeychainStatus: OSStatus, Error, Sendable {
     case param                              = -50
     case wrPerm                             = -61
     case allocate                           = -108
-    case userCancelled                      = -128
+    case userCanceled                       = -128
     case badReq                             = -909
     case internalComponent                  = -2070
     case notAvailable                       = -25291
@@ -436,8 +436,8 @@ extension KeychainStatus: RawRepresentable, CustomStringConvertible {
             return "write permissions error"
         case .allocate:
             return "Failed to allocate memory."
-        case .userCancelled:
-            return "User cancelled the operation."
+        case .userCanceled:
+            return "User canceled the operation."
         case .badReq:
             return "Bad parameter or invalid state for operation."
         case .internalComponent:
