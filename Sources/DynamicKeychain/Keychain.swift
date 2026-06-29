@@ -15,7 +15,16 @@ import SwiftUI
     @State private var defaultValue: T
     
     public var wrappedValue: T {
-        get { (try? Keychain<T>.decode(store.load(key) ?? Data())) ?? defaultValue }
+        get {
+            guard let data = store.load(key) else { return defaultValue }
+            guard let decoded: T = try? Keychain<T>.decode(data) else {
+                #if DEBUG
+                print("⚠️ Keychain: failed to decode '\(key)' — returning default")
+                #endif
+                return defaultValue
+            }
+            return decoded
+        }
         nonmutating set {
             var hasValue = false
             if T.self is ExpressibleByNilLiteral.Type {
@@ -25,7 +34,9 @@ import SwiftUI
             }
 
             if hasValue {
-                try? store.save(key, Keychain<T>.encode(newValue))
+                if let data = try? Keychain<T>.encode(newValue) {
+                    store.save(key, data)
+                }
             } else {
                 store.delete(key)
             }
@@ -93,7 +104,7 @@ import SwiftUI
         case let representable as any RawRepresentable where representable.rawValue is Int:
             withUnsafeBytes(of: representable.rawValue) { Data($0) }
         case let representable as any RawRepresentable where representable.rawValue is String:
-            withUnsafeBytes(of: representable.rawValue) { Data($0) }
+            Data((representable.rawValue as! String).utf8)
         default: throw KeychainError.conversionError
         }
     }
@@ -110,10 +121,8 @@ import SwiftUI
             guard let result = type.init(rawValue: value) as? T else { throw KeychainError.conversionError }
             return result
         } else if let type = T.self as? any RawRepresentable<String>.Type {
-            var value: String = ""
-            guard data.count == MemoryLayout.size(ofValue: value) else { throw KeychainError.conversionError }
-            _ = withUnsafeMutableBytes(of: &value, { data.copyBytes(to: $0)} )
-            guard let result = type.init(rawValue: value) as? T else { throw KeychainError.conversionError }
+            guard let string = String(data: data, encoding: .utf8) else { throw KeychainError.conversionError }
+            guard let result = type.init(rawValue: string) as? T else { throw KeychainError.conversionError }
             return result
         }  else if let optionalType = T.self as? AnyOptional.Type {
             if let type = optionalType.wrappedType as? any RawRepresentable<Int>.Type {
@@ -123,10 +132,8 @@ import SwiftUI
                 guard let result = type.init(rawValue: value) as? T else { throw KeychainError.conversionError }
                 return result
             } else if let type = optionalType.wrappedType as? any RawRepresentable<String>.Type {
-                var value: String = ""
-                guard data.count == MemoryLayout.size(ofValue: value) else { throw KeychainError.conversionError }
-                _ = withUnsafeMutableBytes(of: &value, { data.copyBytes(to: $0)} )
-                guard let result = type.init(rawValue: value) as? T else { throw KeychainError.conversionError }
+                guard let string = String(data: data, encoding: .utf8) else { throw KeychainError.conversionError }
+                guard let result = type.init(rawValue: string) as? T else { throw KeychainError.conversionError }
                 return result
             }
         }
@@ -206,13 +213,11 @@ extension DataConvertible where Self: Numeric {
 
 extension DataConvertible where Self: StringProtocol {
     init?(data: Data) {
-        var value: Self = ""
-        guard data.count == MemoryLayout.size(ofValue: value) else { return nil }
-        _ = withUnsafeMutableBytes(of: &value, { data.copyBytes(to: $0)} )
-        self = value
+        guard let string = String(data: data, encoding: .utf8) as? Self else { return nil }
+        self = string
     }
 
-    var data: Data { withUnsafeBytes(of: self) { Data($0) } }
+    var data: Data { Data(utf8) }
 }
 
 // MARK: AnyOptional: Protocol to check for Optional types
